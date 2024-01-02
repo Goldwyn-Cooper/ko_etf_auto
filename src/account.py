@@ -119,7 +119,7 @@ def trading_payload(pdno: str, qty: int):
 
 def sell_market_order(symbol, qty, token):
     send_message(f'🐻 매도 ({symbol})')
-    send_message(f'📌 매도량 ₩{qty:,}')
+    send_message(f'📌 매도량 {qty:,}')
     json = requests.post(KIS_DOMAIN + KIS_TRADING + '/order-cash',
             json=trading_payload(symbol, qty),
             headers=get_headers(token, 'TTTC0801U')).json()
