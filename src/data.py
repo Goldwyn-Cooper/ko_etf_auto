@@ -6,6 +6,8 @@ import ast
 import pandas as pd
 import requests
 
+pd.options.display.float_format = '{:.3f}'.format
+
 MARKETCAP='https://finance.naver.com/api/sise/etfItemList.nhn?etfType=0'
 PRICE='https://api.finance.naver.com/siseJson.naver'
 

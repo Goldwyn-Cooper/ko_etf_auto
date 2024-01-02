@@ -144,7 +144,7 @@ def exit_position(balance: pd.DataFrame, candidate: pd.DataFrame, token: str):
         send_message('[EXIT]')
         send_message(exit_table)
     for r in exit_table.itertuples():
-        send_message(f'매도 주문 : {r.Index}')
+        # send_message(f'매도 주문 : {r.Index}')
         sell_market_order(r.Index, r.보유수량, token)
 
 def enter_position(balance: pd.DataFrame, candidate: pd.DataFrame, budget:int, token: str):
@@ -154,6 +154,6 @@ def enter_position(balance: pd.DataFrame, candidate: pd.DataFrame, budget:int, t
         send_message('[ENTER]')
         send_message(enter_table)
     for r in enter_table.itertuples():
-        send_message(f'매수 주문 : {r.Index}')
+        # send_message(f'매수 주문 : {r.Index}')
         price = get_price(r).close.iloc[-1]
         buy_market_order(r.Index, int(r.risk * budget), price, token)

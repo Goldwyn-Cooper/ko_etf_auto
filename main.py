@@ -5,7 +5,7 @@ from src.account import *
 
 def get_candidate():
     mc = get_marketcap_from_naver()
-    send_message(', '.join(mc.itemname.to_list()))
+    # send_message(', '.join(mc.itemname.to_list()))
     prices = {}
     volatility = {}
     for s in mc.itemcode:
@@ -20,6 +20,11 @@ def get_candidate():
     cluster['momentum'] = cluster.symbol.apply(scoring)
     risk = lambda x: min(1, 0.01 / (atr(volatility[x], max(FIBO)) / prices[x].close.iloc[-1])) / 4
     cluster['risk'] = cluster.symbol.apply(risk)
+    send_message(
+        cluster.merge(mc, left_on='symbol', right_on='itemcode')            
+            .loc[:, ('group', 'itemname')]
+            .sort_values(['group'])
+            .set_index('group'))
     return cluster\
                 .loc[(cluster.groupby('group')['momentum'].idxmax())]\
                 .query('momentum > 0')\
@@ -39,6 +44,6 @@ if __name__ == '__main__':
         send_message(balance)
     send_message('[CANDIDATE]')
     candidate = get_candidate()
-    send_message(candidate)
+    send_message(candidate.set_index('itemname'))
     exit_position(balance, candidate, token)
     enter_position(balance, candidate, budget, token)
