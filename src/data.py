@@ -14,9 +14,9 @@ def get_marketcap_from_naver() -> pd.DataFrame:
     cols = ('itemcode', 'etfTabCode', 'itemname', 'amonut', 'marketSum')
     data = response.json().get('result').get('etfItemList')
     df = pd.DataFrame(data).dropna().loc[:, cols]
-    kwds = '액티브|혼합|레버리지|2X|단기|금리|배당|3년|은행|BBIG|\
-            인도|베트남|콜|TRF|닥100|P500|리츠|MSCI|R50|I300|\
-            HANARO|SOL|ARIRANG'
+    kwds = '액티브|혼합|레버리지|2X|단기|금리|배당|3년|은행|BBIG'\
+            +'|인도|베트남|콜|TRF|닥100|P500|리츠|MSCI|R50|I300'\
+            +'|HANARO|SOL|ARIRANG'
     df.query(f'not itemname.str.contains("{kwds}")', inplace=True)
     df['category_marketSum_mean'] = df['etfTabCode'].apply(lambda x: df[df.etfTabCode == x].marketSum.mean())
     df['category_amonut_mean'] = df['etfTabCode'].apply(lambda x: df[df.etfTabCode == x].amonut.mean())
