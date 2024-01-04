@@ -1,8 +1,8 @@
 import pandas as pd
 from sklearn.cluster import AffinityPropagation
 
-# FIBO = (3, 5, 8, 13, 21)
-FIBO = (5, 13, 34, 89)
+FIBO = (3, 5, 8, 13, 21)
+# FIBO = (5, 13, 34, 89)
 
 def momentum(close: pd.Series, period: int):
     t = close.tail(period)
