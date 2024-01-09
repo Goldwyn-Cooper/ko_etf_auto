@@ -33,7 +33,7 @@ def get_candidate():
                 .head(4).set_index('symbol').drop('itemcode', axis=1)
 
 if __name__ == '__main__':
-    send_message('🇰🇷📈🤖💰🔁')
+    send_message('🚀')
     send_message('[TOKEN]')
     token = get_token()
     budget = get_account_balance(token)
