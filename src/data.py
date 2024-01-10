@@ -16,10 +16,11 @@ def get_marketcap_from_naver() -> pd.DataFrame:
     cols = ('itemcode', 'etfTabCode', 'itemname', 'amonut', 'marketSum')
     data = response.json().get('result').get('etfItemList')
     df = pd.DataFrame(data).dropna().loc[:, cols]
-    kwds = '액티브|혼합|레버리지|2X|단기|금리|배당|3년|은행|BBIG'\
-            +'|인도|베트남|콜|TRF|닥100|P500|리츠|MSCI|R50|I300'\
+    kwds = '액티브|혼합|레버리지|2X|단기|금리|배당|3년|은행|BBIG|글로벌'\
+            +'|인도|베트남|콜|TR|닥100|P500|리츠|MSCI|R50|I300'\
             +'|HANARO|SOL|ARIRANG'
     df.query(f'not itemname.str.contains("{kwds}")', inplace=True)
+    df.query(f'(not itemname.str.contains("합성")) or etfTabCode == 3', inplace=True)
     df['category_marketSum_mean'] = df['etfTabCode'].apply(lambda x: df[df.etfTabCode == x].marketSum.mean())
     df['category_amonut_mean'] = df['etfTabCode'].apply(lambda x: df[df.etfTabCode == x].amonut.mean())
     expr = f'marketSum >= category_marketSum_mean\
@@ -41,3 +42,6 @@ def get_price(symbol):
     df = pd.DataFrame(data[1:], columns=data[0]).loc[:, ('고가', '저가', '종가')]
     df.columns = ['high', 'low', 'close']
     return df
+
+if __name__ == '__main__':
+    print(get_marketcap_from_naver())

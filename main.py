@@ -1,7 +1,7 @@
-from src.technical import *
-from src.telegram import *
-from src.data import *
-from src.account import *
+from src.telegram import send_message
+from src.data import get_price, get_marketcap_from_naver
+from src.technical import FIBO, momentum, tr, atr, correlation, clustering
+from src.account import get_token, get_account_balance, get_balance, exit_position, enter_position
 
 def get_candidate():
     mc = get_marketcap_from_naver()
@@ -31,6 +31,10 @@ def get_candidate():
                 .sort_values('momentum', ascending=False)\
                 .merge(mc, left_on='symbol', right_on='itemcode')\
                 .head(4).set_index('symbol').drop('itemcode', axis=1)
+
+# if __name__ == '__main__':
+#     candidate = get_candidate()
+#     print(candidate.set_index('itemname'))
 
 if __name__ == '__main__':
     send_message('🚀')
