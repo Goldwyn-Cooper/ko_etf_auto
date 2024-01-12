@@ -17,7 +17,7 @@ def get_candidate():
     corr = correlation(volatility)
     cluster = clustering(corr)
     scoring = lambda x: sum([momentum(prices[x].close, f) for f in FIBO]) / len(FIBO)
-    cluster['momentum'] = cluster.symbol.apply(scoring)
+    cluster['momentum'] = cluster.symbol.apply(scoring) * 252
     risk = lambda x: min(1, 0.01 / (atr(volatility[x], max(FIBO)) / prices[x].close.iloc[-1])) / 4
     cluster['risk'] = cluster.symbol.apply(risk)
     send_message(

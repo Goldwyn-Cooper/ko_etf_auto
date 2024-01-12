@@ -10,6 +10,13 @@ def send_message(text):
     chat_id = os.getenv('TELEGRAM_BOT_CHAT_ID')
     if type(text) == pd.DataFrame:
         text = text.reset_index().to_string(index=False)
-    requests.post(URL + '/sendMessage', dict(
-        chat_id=chat_id,
-        text=text))
+    print(text)
+    try:
+        r = requests.post(URL + '/sendMessage', dict(
+            chat_id=chat_id,
+            text=text),
+            timeout=100)
+        r.raise_for_status()
+    except Exception as e:
+        print(e)
+        print(r.text)

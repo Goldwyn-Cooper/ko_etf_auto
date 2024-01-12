@@ -1,12 +1,11 @@
 import pandas as pd
 from sklearn.cluster import AffinityPropagation
 
-FIBO = (3, 5, 8, 13, 21)
-# FIBO = (5, 13, 34, 89)
+FIBO = (3, 5, 8, 13, 21, 34, 55)
 
 def momentum(close: pd.Series, period: int):
     t = close.tail(period)
-    return t.iloc[-1] / t.iloc[0] - 1
+    return (t.iloc[-1] / t.iloc[0] - 1) / period
 
 def tr(df: pd.DataFrame):
     concat = lambda *x: pd.concat(x, axis=1)

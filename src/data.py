@@ -16,15 +16,22 @@ def get_marketcap_from_naver() -> pd.DataFrame:
     cols = ('itemcode', 'etfTabCode', 'itemname', 'amonut', 'marketSum')
     data = response.json().get('result').get('etfItemList')
     df = pd.DataFrame(data).dropna().loc[:, cols]
-    kwds = '액티브|혼합|레버리지|2X|단기|금리|배당|3년|은행|BBIG|글로벌|헬스케어|바이오'\
-            +'|인도|베트남|니케이|콜|TR|닥100|P500|리츠|MSCI|R50|I300|10년'\
-            +'|HANARO|SOL|ARIRANG'
-    df.query(f'not itemname.str.contains("{kwds}")', inplace=True)
-    df.query(f'(not itemname.str.contains("합성")) or etfTabCode == 3', inplace=True)
-    df['category_marketSum_mean'] = df['etfTabCode'].apply(lambda x: df[df.etfTabCode == x].marketSum.mean())
-    df['category_amonut_mean'] = df['etfTabCode'].apply(lambda x: df[df.etfTabCode == x].amonut.mean())
-    expr = f'marketSum >= category_marketSum_mean\
-            and amonut >= category_amonut_mean\
+    kwds = '액티브|혼합|합성|닥100|P500|MSCI'\
+            +'|중국|차이나|인도|베트남|니케이|225|R50|I300|글로벌'\
+            +'|10년|단기|금리|3년|배당|가치|은행|리츠|콜|TR'
+    df.query(f'not itemname.str.contains("{kwds}")\
+               or etfTabCode == 3', inplace=True)
+    kwds2 = '레버리지|2X'
+    df.query(f'not itemname.str.contains("{kwds2}")', inplace=True)
+    df['category_marketSum_median'] = df['etfTabCode'].apply(
+        lambda x: df[df.etfTabCode == x].marketSum.median())
+    df['category_amonut_mean'] = df['etfTabCode'].apply(
+        lambda x: df[df.etfTabCode == x].amonut.mean())
+    kwds3 = 'BBIG|ESG|소프트웨어|테크|인터넷|플러스|MV|나스닥|스페이스|\sTOP10'\
+            +'|HANARO|KOSEF|SOL|ARIRANG'
+    df.query(f'not itemname.str.contains("{kwds3}")', inplace=True)
+    expr = f'marketSum >= category_marketSum_median\
+            and (amonut >= category_amonut_mean or etfTabCode == 7)\
             and etfTabCode != 1'
     return df.query(expr).loc[:, ['itemcode', 'itemname']].reset_index(drop=True)
 
