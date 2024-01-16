@@ -16,28 +16,27 @@ def get_marketcap_from_naver() -> pd.DataFrame:
     cols = ('itemcode', 'etfTabCode', 'itemname', 'amonut', 'quant', 'marketSum')
     data = response.json().get('result').get('etfItemList')
     df = pd.DataFrame(data).dropna().loc[:, cols]
-    kwds_pre = '레버리지|2X'\
-            +'|HANARO|KOSEF|SOL|ARIRANG'
-    df.query(f'not itemname.str.contains("{kwds_pre}")',
-             inplace=True)
+    kwds = '액티브|혼합|합성|TR|콜|SOL'\
+            +'|3년|10년|단기|장기|금리|배당|은행|증권|리츠'\
+            +'|BBIG|ESG|메타버스|삼성|\sTOP10$'
+    df.query(f'not itemname.str.contains("{kwds}")\
+               or itemname.str.contains("TOP10인버스")',
+               inplace=True)
+    # 시가총액 & 거래금액 상위 50% 이상, 거래량 평균 이상
+    # 2배 레버리지 제외, 국내지수, 국내파생, 해외 제외
+    # but 코스피, 코스닥, 2차전지 인버스 포함
     df['category_marketSum_median'] = df['etfTabCode'].apply(
         lambda x: df[df.etfTabCode == x].marketSum.median())
     df['category_amonut_median'] = df['etfTabCode'].apply(
         lambda x: df[df.etfTabCode == x].amonut.median())
     df['category_quant_mean'] = df['etfTabCode'].apply(
         lambda x: df[df.etfTabCode == x].quant.mean())
-    kwds = '액티브|혼합|합성|TR|콜'\
-            +'|3년|10년|단기|장기|금리'\
-            +'|배당|은행|증권|리츠'\
-            +'|BBIG|ESG|삼성|메타버스|소재|\sTOP10$'
-    df.query(f'not itemname.str.contains("{kwds}")\
-               or itemname.str.contains("엔선물|달러선물|TOP10인버스")',
-               inplace=True)
-    expr = f'marketSum >= category_marketSum_median\
-            and ((amonut >= category_amonut_median\
-            and (quant >= category_quant_mean or etfTabCode == 3))\
-            or etfTabCode == 7)\
-            and etfTabCode not in [1, 4]'
+    expr = f'((marketSum >= category_marketSum_median\
+            and (amonut >= category_amonut_median\
+            and quant >= category_quant_mean))\
+            and not itemname.str.contains("2X|레버리지")\
+            and etfTabCode not in [1, 3, 4, 7])\
+            or itemcode in ["114800", "251340", "465350"]'
     return df.query(expr).loc[:, ['itemcode', 'itemname']].reset_index(drop=True)
 
 def get_price(symbol):
