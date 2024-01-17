@@ -49,5 +49,5 @@ if __name__ == '__main__':
     send_message('[CANDIDATE]')
     candidate = get_candidate()
     send_message(candidate.set_index('itemname'))
-    # exit_position(balance, candidate, token)
-    # enter_position(balance, candidate, budget, token)
+    exit_position(balance, candidate, token)
+    enter_position(balance, candidate, budget, token)
