@@ -16,12 +16,6 @@ def get_marketcap_from_naver() -> pd.DataFrame:
     cols = ('itemcode', 'etfTabCode', 'itemname', 'amonut', 'quant', 'marketSum')
     data = response.json().get('result').get('etfItemList')
     df = pd.DataFrame(data).dropna().loc[:, cols]
-    kwds = '액티브|혼합|합성|TR|콜|SOL'\
-            +'|3년|10년|단기|장기|금리|배당|은행|증권|리츠'\
-            +'|BBIG|ESG|메타버스|삼성|\sTOP10$'
-    df.query(f'not itemname.str.contains("{kwds}")\
-               or itemname.str.contains("TOP10인버스")',
-               inplace=True)
     # 시가총액 & 거래금액 상위 50% 이상, 거래량 평균 이상
     # 2배 레버리지 제외, 국내지수, 국내파생, 해외 제외
     # but 코스피, 코스닥, 2차전지 인버스 포함
@@ -31,6 +25,12 @@ def get_marketcap_from_naver() -> pd.DataFrame:
         lambda x: df[df.etfTabCode == x].amonut.median())
     df['category_quant_mean'] = df['etfTabCode'].apply(
         lambda x: df[df.etfTabCode == x].quant.mean())
+    kwds = '액티브|혼합|합성|TR|콜|플러스'\
+            +'|3년|10년|단기|장기|금리|배당|은행|증권|리츠'\
+            +'|BBIG|ESG|메타버스|삼성|소재|소부장'
+    df.query(f'not itemname.str.contains("{kwds}")\
+               or itemname.str.contains("TOP10인버스")',
+               inplace=True)
     expr = f'((marketSum >= category_marketSum_median\
             and (amonut >= category_amonut_median\
             and quant >= category_quant_mean))\
