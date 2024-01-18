@@ -1,7 +1,7 @@
 import pandas as pd
 from sklearn.mixture import GaussianMixture
 
-FIBO = (3, 5, 8, 13, 21, 34, 55)
+FIBO = (2, 3, 5, 8, 13)
 
 
 def momentum(close: pd.Series, period: int):
@@ -27,7 +27,7 @@ def correlation(volatility: dict):
 
 
 def clustering(corr: pd.DataFrame, cnt: int):
-    gmm = GaussianMixture(n_components=cnt * 2)
+    gmm = GaussianMixture(n_components=cnt * 2, random_state=0)
     gmm.fit(corr)
     cluster_labels = gmm.predict(corr)
     return pd.DataFrame({"symbol": corr.columns, "group": cluster_labels + 1})
