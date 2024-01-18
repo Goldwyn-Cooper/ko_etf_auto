@@ -21,7 +21,7 @@ def get_marketcap_from_naver() -> pd.DataFrame:
     # but 코스피, 코스닥, 2차전지 인버스 포함
     df['category_marketSum_median'] = df['etfTabCode'].apply(
         lambda x: df[df.etfTabCode == x].marketSum.median())
-    df['category_amonut_median'] = df['etfTabCode'].apply(
+    df['category_amonut_mean'] = df['etfTabCode'].apply(
         lambda x: df[df.etfTabCode == x].amonut.mean())
     df['category_quant_mean'] = df['etfTabCode'].apply(
         lambda x: df[df.etfTabCode == x].quant.mean())
@@ -33,8 +33,8 @@ def get_marketcap_from_naver() -> pd.DataFrame:
                or itemname.str.contains("TOP10인버스")',
                inplace=True)
     expr = f'((marketSum >= category_marketSum_median\
-            and (amonut >= category_amonut_median\
-            and quant >= category_quant_mean))\
+            and amonut >= category_amonut_mean\
+            and quant >= category_quant_mean)\
             and not itemname.str.contains("2X|레버리지")\
             and etfTabCode not in [1, 3, 4, 7])\
             or itemcode in ["114800", "251340", "465350"]'
