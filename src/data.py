@@ -25,7 +25,7 @@ def get_marketcap_from_naver() -> pd.DataFrame:
         lambda x: df[df.etfTabCode == x].amonut.median())
     df['category_quant_mean'] = df['etfTabCode'].apply(
         lambda x: df[df.etfTabCode == x].quant.mean())
-    kwds = '액티브|혼합|합성|TR|콜|플러스'\
+    kwds = '액티브|혼합|합성|TR|콜|플러스|포커스'\
             +'|3년|10년|단기|장기|금리|배당|은행|증권|리츠'\
             +'|BBIG|ESG|메타버스|삼성|소재|소부장'
     df.query(f'not itemname.str.contains("{kwds}")\
