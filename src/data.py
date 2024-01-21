@@ -35,7 +35,7 @@ def get_marketcap_from_naver() -> pd.DataFrame:
              and quant >= category_quant)\
              or itemcode.str.contains("{include_itemcode}")'
     df.query(expr, inplace=True)
-    kwd1 = "2X|레버리지|TDF|TRF|혼합|금리|배당|리츠"
+    kwd1 = "2X|레버리지|TDF|TRF|혼합|금리|배당|리츠|은행"
     kwd2 = "SOL\s|TIMEFOLIO|KoAct|ARIRANG|밸류|포커스|소재"
     kwd3 = "글로벌|미국|인도"
     expr = f'(not itemname.str.contains("{kwd1}")\
