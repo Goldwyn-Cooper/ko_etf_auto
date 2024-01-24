@@ -18,7 +18,7 @@ def get_marketcap_from_naver() -> pd.DataFrame:
     cols = ("itemcode", "etfTabCode", "itemname", "amonut", "quant", "marketSum")
     data = response.json().get("result").get("etfItemList")
     df = pd.DataFrame(data).dropna().loc[:, cols]
-    include_itemcode = "465350|304660|385560|261240|261270|292560"
+    include_itemcode = "465350|304660|385560|411060|114800|251340"
     # 시가총액 상위 50% 이상, 거래금액 & 거래량 평균 이상
     df["category_marketSum"] = df["etfTabCode"].apply(
         lambda x: df[df.etfTabCode == x].marketSum.median()
@@ -34,16 +34,15 @@ def get_marketcap_from_naver() -> pd.DataFrame:
              and quant >= category_quant)\
              or itemcode.str.contains("{include_itemcode}")'
     df.query(expr, inplace=True)
-    kwd1 = "2X|레버리지|TDF|TRF|혼합|액티브|금리|배당|리츠|은행"
-    kwd2 = "SOL\s|TIMEFOLIO|KoAct|ARIRANG|HANARO|밸류|포커스"
-    kwd3 = "글로벌|미국|인도|베트남"
+    kwd1 = "2X|레버리지|TDF|TR|혼합|액티브|\(H\)|선물|합성|금리|배당|리츠|은행"
+    kwd2 = "SOL\s|TIMEFOLIO|KoAct|ARIRANG|HANARO|밸류|포커스|삼성|소재|Plus|플러스"
+    kwd3 = "글로벌|일본|중국|차이나|인도|베트남"
     expr = f'(not itemname.str.contains("{kwd1}")\
             and not itemname.str.contains("{kwd2}")\
             and not itemname.str.contains("{kwd3}")\
-            and not etfTabCode in [1, 6]) or itemcode.str.contains("{include_itemcode}")'
+            and etfTabCode in [1, 2, 4]) or itemcode.str.contains("{include_itemcode}")'
     df.query(expr, inplace=True)
     return df.loc[:, ["itemcode", "itemname"]].reset_index(drop=True)
-
 
 def get_price(symbol):
     td = dt.utcnow() + rd(hours=9)
