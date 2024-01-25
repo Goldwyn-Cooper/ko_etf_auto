@@ -20,21 +20,18 @@ def get_marketcap_from_naver() -> pd.DataFrame:
     df = pd.DataFrame(data).dropna().loc[:, cols]
     include_itemcode = "465350|304660|385560|411060|114800|251340"\
         + "|069500|229200|379800|379810|314250"
-    # 시가총액 상위 50% 이상, 거래량 평균 이상
+    # 시가총액 상위 50% 이상, 거래대금 평균 이상, 거래량 평균 이상
     df["category_marketSum"] = df["etfTabCode"].apply(
         lambda x: df[df.etfTabCode == x].marketSum.median()
     )
-    # df["category_amonut"] = df["etfTabCode"].apply(
-    #     lambda x: df[df.etfTabCode == x].amonut.mean()
-    # )
+    df["category_amonut"] = df["etfTabCode"].apply(
+        lambda x: df[df.etfTabCode == x].amonut.mean()
+    )
     df["category_quant"] = df["etfTabCode"].apply(
         lambda x: df[df.etfTabCode == x].quant.mean()
     )
-    # expr = f'(marketSum >= category_marketSum\
-    #          and amonut >= category_amonut\
-    #          and quant >= category_quant)\
-    #          or itemcode.str.contains("{include_itemcode}")'
     expr = f'(marketSum >= category_marketSum\
+             and amonut >= category_amonut\
              and quant >= category_quant)\
              or itemcode.str.contains("{include_itemcode}")'
     df.query(expr, inplace=True)
