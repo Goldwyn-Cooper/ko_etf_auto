@@ -1,6 +1,7 @@
 from src.telegram import send_message
-from src.data import get_price, get_marketcap_from_naver
-from src.technical import FIBO, momentum, tr, atr, correlation, clustering
+# from src.data import get_price, get_marketcap_from_naver
+# from src.technical import FIBO, momentum, tr, atr, correlation, clustering
+from src.table import get_table
 from src.account import (
     get_token,
     get_account_balance,
@@ -8,44 +9,6 @@ from src.account import (
     exit_position,
     enter_position,
 )
-
-
-def get_candidate(cnt):
-    mc = get_marketcap_from_naver()
-    prices = {}
-    volatility = {}
-    for s in mc.itemcode:
-        p = get_price(s)
-        if len(p) < FIBO[-1]:
-            continue
-        prices[s] = p
-        volatility[s] = tr(p)
-    corr = correlation(volatility)
-    cluster = clustering(corr, cnt)
-    scoring = lambda x: sum([momentum(prices[x].close, f) for f in FIBO]) / len(FIBO)
-    cluster["momentum"] = cluster.symbol.apply(scoring) * 252
-    risk = (
-        lambda x: min(
-            1, 0.01 / (atr(volatility[x], max(FIBO)) / prices[x].close.iloc[-1])
-        )
-        / cnt
-    )
-    cluster["risk"] = cluster.symbol.apply(risk)
-    send_message(
-        cluster.merge(mc, left_on="symbol", right_on="itemcode")
-        .loc[:, ("group", "itemname")]
-        .sort_values(["group"])
-        .set_index("group")
-    )
-    return (
-        cluster.loc[(cluster.groupby("group")["momentum"].idxmax())]
-        .query("momentum > 0")
-        .sort_values("momentum", ascending=False)
-        .merge(mc, left_on="symbol", right_on="itemcode")
-        .head(cnt)
-        .set_index("symbol")
-        .drop("itemcode", axis=1)
-    )
 
 
 if __name__ == "__main__":
@@ -58,7 +21,7 @@ if __name__ == "__main__":
     if len(balance):
         send_message(balance)
     send_message("[CANDIDATE]")
-    candidate = get_candidate(budget // 20_000_000 + 1)
-    send_message(candidate.set_index("itemname"))
-    exit_position(balance, candidate, token)
-    enter_position(balance, candidate, budget, token)
+    table = get_table().set_index("종목코드")
+    send_message(table)
+    exit_position(balance, table, token)
+    enter_position(balance, table, budget, token)

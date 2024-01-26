@@ -170,7 +170,7 @@ def buy_market_order(symbol, amt, price, token):
 
 def exit_position(balance: pd.DataFrame, candidate: pd.DataFrame, token: str):
     exit_table = (
-        balance.join(candidate, how="left").query("risk.isna()").loc[:, ["상품명", "보유수량"]]
+        balance.join(candidate, how="left").query("비중.isna()").loc[:, ["상품명", "보유수량"]]
     )
     if len(exit_table):
         send_message("[EXIT]")
@@ -186,7 +186,7 @@ def enter_position(
     enter_table = (
         balance.join(candidate, how="right")
         .query("보유수량.isna()")
-        .loc[:, ["itemname", "risk"]]
+        .loc[:, ["종목명", "비중"]]
     )
     if len(enter_table):
         send_message("[ENTER]")
@@ -194,4 +194,4 @@ def enter_position(
     for r in enter_table.itertuples():
         # send_message(f'매수 주문 : {r.Index}')
         price = get_price(r).close.iloc[-1]
-        buy_market_order(r.Index, int(r.risk * budget), price, token)
+        buy_market_order(r.Index, int(r.비중 * budget), price, token)
