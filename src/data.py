@@ -12,7 +12,6 @@ pd.options.display.float_format = "{:.3f}".format
 MARKETCAP = "https://finance.naver.com/api/sise/etfItemList.nhn?etfType=0"
 PRICE = "https://api.finance.naver.com/siseJson.naver"
 
-
 def get_marketcap_from_naver() -> pd.DataFrame:
     response = requests.get(MARKETCAP)
     cols = ("itemcode", "etfTabCode", "itemname", "amonut", "quant", "marketSum")
@@ -24,16 +23,12 @@ def get_marketcap_from_naver() -> pd.DataFrame:
     df["category_marketSum"] = df["etfTabCode"].apply(
         lambda x: df[df.etfTabCode == x].marketSum.median()
     )
-    # df["category_amonut"] = df["etfTabCode"].apply(
-    #     lambda x: df[df.etfTabCode == x].amonut.mean()
-    # )
+    df["category_amonut"] = df["etfTabCode"].apply(
+        lambda x: df[df.etfTabCode == x].amonut.mean()
+    )
     df["category_quant"] = df["etfTabCode"].apply(
         lambda x: df[df.etfTabCode == x].quant.mean()
     )
-    # expr = f'(marketSum >= category_marketSum\
-    #          and amonut >= category_amonut\
-    #          and quant >= category_quant)\
-    #          or itemcode.str.contains("{include_itemcode}")'
     expr = f'(marketSum >= category_marketSum\
              and quant >= category_quant)\
              or itemcode.str.contains("{include_itemcode}")'
