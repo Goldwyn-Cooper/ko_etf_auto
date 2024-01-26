@@ -19,28 +19,20 @@ def get_marketcap_from_naver() -> pd.DataFrame:
     df = pd.DataFrame(data).dropna().loc[:, cols]
     include_itemcode = "465350|304660|385560|411060|114800|251340"\
         + "|069500|229200|379800|379810"
-    # 시가총액 상위 50% 이상, 거래대금 평균 이상, 거래량 평균 이상
+    # 시가총액 상위 50% 이상, 거래량 평균 이상
     df["category_marketSum"] = df["etfTabCode"].apply(
-        lambda x: df[df.etfTabCode == x].marketSum.median()
-    )
-    df["category_amonut"] = df["etfTabCode"].apply(
-        lambda x: df[df.etfTabCode == x].amonut.mean()
-    )
+        lambda x: df[df.etfTabCode == x].marketSum.median())
     df["category_quant"] = df["etfTabCode"].apply(
-        lambda x: df[df.etfTabCode == x].quant.mean()
-    )
-    expr = f'(marketSum >= category_marketSum\
-             and quant >= category_quant)\
-             or itemcode.str.contains("{include_itemcode}")'
-    df.query(expr, inplace=True)
-    kwd1 = "2X|레버리지|TDF|TR|혼합|액티브|\(H\)|선물|합성|금리|배당|리츠|은행"
-    kwd2 = "SOL\s|TIMEFOLIO|KoAct|ARIRANG|HANARO|KBSTAR|ACE|밸류|포커스|소재|삼성"
-    kwd3 = "글로벌|일본|중국|차이나|인도|베트남|P500|닥100"
-    expr = f'(not itemname.str.contains("{kwd1}")\
-            and not itemname.str.contains("{kwd2}")\
-            and not itemname.str.contains("{kwd3}")\
-            and etfTabCode in [2, 4]) or itemcode.str.contains("{include_itemcode}")'
-    df.query(expr, inplace=True)
+        lambda x: df[df.etfTabCode == x].quant.mean())
+    # 쿼리 적용
+    df.query(f'(itemname.str.contains("KODEX|TIGER")\
+        and not itemname.str.contains("배당|은행|리츠|소재")\
+        and not itemname.str.contains("글로벌|차이나|인도|일본|닥100|P500")\
+        and not itemname.str.contains("액티브|\(합성\)|선물|\(H\)|레버리지|2X")\
+        and marketSum >= category_marketSum\
+            and quant >= category_quant\
+            and etfTabCode in [2, 4])\
+            or itemcode.str.contains("{include_itemcode}")', inplace=True)
     return df.loc[:, ["itemcode", "itemname"]].reset_index(drop=True)
 
 def get_price(symbol):
