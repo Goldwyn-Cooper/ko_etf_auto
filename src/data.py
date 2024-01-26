@@ -19,24 +19,27 @@ def get_marketcap_from_naver() -> pd.DataFrame:
     data = response.json().get("result").get("etfItemList")
     df = pd.DataFrame(data).dropna().loc[:, cols]
     include_itemcode = "465350|304660|385560|411060|114800|251340"\
-        + "|069500|229200|379800|379810|314250"
+        + "|069500|229200|379800|379810"
     # 시가총액 상위 50% 이상, 거래대금 평균 이상, 거래량 평균 이상
     df["category_marketSum"] = df["etfTabCode"].apply(
         lambda x: df[df.etfTabCode == x].marketSum.median()
     )
-    df["category_amonut"] = df["etfTabCode"].apply(
-        lambda x: df[df.etfTabCode == x].amonut.mean()
-    )
+    # df["category_amonut"] = df["etfTabCode"].apply(
+    #     lambda x: df[df.etfTabCode == x].amonut.mean()
+    # )
     df["category_quant"] = df["etfTabCode"].apply(
         lambda x: df[df.etfTabCode == x].quant.mean()
     )
+    # expr = f'(marketSum >= category_marketSum\
+    #          and amonut >= category_amonut\
+    #          and quant >= category_quant)\
+    #          or itemcode.str.contains("{include_itemcode}")'
     expr = f'(marketSum >= category_marketSum\
-             and amonut >= category_amonut\
              and quant >= category_quant)\
              or itemcode.str.contains("{include_itemcode}")'
     df.query(expr, inplace=True)
     kwd1 = "2X|레버리지|TDF|TR|혼합|액티브|\(H\)|선물|합성|금리|배당|리츠|은행"
-    kwd2 = "SOL\s|TIMEFOLIO|KoAct|ARIRANG|밸류|포커스|소재|삼성"
+    kwd2 = "SOL\s|TIMEFOLIO|KoAct|ARIRANG|HANARO|밸류|포커스|소재|삼성|Plus|플러스"
     kwd3 = "글로벌|일본|중국|차이나|인도|베트남|P500|닥100"
     expr = f'(not itemname.str.contains("{kwd1}")\
             and not itemname.str.contains("{kwd2}")\

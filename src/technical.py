@@ -27,7 +27,7 @@ def correlation(volatility: dict):
 
 
 def clustering(corr: pd.DataFrame, cnt: int):
-    gmm = GaussianMixture(n_components=cnt * 2, random_state=0)
+    gmm = GaussianMixture(n_components=cnt * 2, random_state=42)
     gmm.fit(corr)
     cluster_labels = gmm.predict(corr)
     return pd.DataFrame({"symbol": corr.columns, "group": cluster_labels + 1})
