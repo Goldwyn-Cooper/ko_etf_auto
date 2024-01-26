@@ -1,8 +1,8 @@
 import pandas as pd
 from sklearn.mixture import GaussianMixture
 
-# FIBO = (3, 5, 8, 13, 21)
-FIBO = (2, 3, 5, 8, 13)
+FIBO = (3, 5, 8, 13, 21)
+# FIBO = (2, 3, 5, 8, 13)
 
 
 def momentum(close: pd.Series, period: int):
