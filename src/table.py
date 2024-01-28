@@ -54,15 +54,16 @@ def get_table():
     candidate["변동성2"] = candidate["변동성"] / candidate["변동성"].min()
     candidate["모멘텀"] = [get_score(get_price(c), periods) for c in candidate.종목코드]
     candidate["모멘텀2"] = candidate["모멘텀"] / candidate["변동성2"]
-    candidate["비중"] = 1 / 6 / candidate["변동성2"]
-    return (
-        candidate.query("모멘텀2 > 0")
-        .sort_values(by=["분류", "모멘텀2"], ascending=[True, False])
-        .groupby("분류")
-        .head(2)
-        .loc[:, ["종목명", "종목코드", "분류", "비중"]]
+    candidate["비중"] = 1 / candidate["분류"].nunique() / candidate["변동성2"]
+    # print(candidate)
+    return candidate.query("모멘텀2 > 0")\
+        .sort_values(by=["분류", "모멘텀2"], ascending=[True, False])\
+        .groupby("분류")\
+        .head(1)\
+        .loc[:, ["종목명", "종목코드", "분류", "비중"]]\
         .reset_index(drop=True)
-    )
 
 if __name__ == "__main__":
-    print(get_table())
+    t = get_table()
+    print(t)
+    print(t.비중.sum())
