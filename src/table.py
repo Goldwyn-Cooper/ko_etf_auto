@@ -6,7 +6,7 @@ import requests
 import pandas as pd
 
 prices = {}
-periods = [8, 13, 21, 34, 55]
+periods = [2, 3, 5, 8, 13, 21, 34, 55]
 
 
 def get_price(symbol):
@@ -51,7 +51,8 @@ def get_table():
     candidate["변동성"] = [
         get_volatility(get_price(c), periods[-1]) for c in candidate.종목코드
     ]
-    candidate["변동성2"] = candidate["변동성"] / candidate["변동성"].min()
+    candidate["변동성2"] = (candidate["변동성"] / candidate["변동성"].quantile(.25)
+                         ).apply(lambda x: 1 if x <= 1 else x)
     candidate["모멘텀"] = [get_score(get_price(c), periods) for c in candidate.종목코드]
     # candidate["모멘텀2"] = candidate["모멘텀"] / candidate["변동성2"]
     candidate["비중"] = 1 / candidate["분류"].nunique() / candidate["변동성2"]
