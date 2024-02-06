@@ -103,6 +103,7 @@ def get_account_balance(token):
     df = pd.DataFrame(json.get("output1")[:-1])
     df.columns = KIS_ACCOUNT_BALACNE_COL
     df.index = KIS_ACCOUNT_BALACNE_ROW
+    send_message(f'자산총액 : ₩{int(df.loc[:, "평가금액"].astype(int).sum()):,}')
     send_message(f'예수금 : ₩{int(df.loc["예수금+CMA", "평가금액"]):,}')
     send_message(f'RP : ₩{int(df.loc["RP/발행어음", "평가금액"]):,}')
     return df.loc[:, "평가금액"].drop("채권").astype(int).sum()

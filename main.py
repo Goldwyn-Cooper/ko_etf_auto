@@ -17,7 +17,7 @@ if __name__ == "__main__":
     budget = get_account_balance(token)
     balance = get_balance(token)
     send_message("[BALANCE]")
-    send_message(f"보유자산 : ₩{int(budget):,}")
+    send_message(f"트레이딩가능 : ₩{int(budget):,}")
     if len(balance):
         send_message(balance)
     send_message("[CANDIDATE]")
