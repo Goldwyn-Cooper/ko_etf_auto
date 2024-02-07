@@ -58,7 +58,7 @@ def get_table():
     candidate["모멘텀"] = [get_score(get_price(c), periods) for c in candidate.종목코드]
     # candidate["모멘텀2"] = candidate["모멘텀"] / candidate["변동성2"]
     candidate["비중"] = 1 / candidate["분류"].nunique() / candidate["변동성2"]
-    print(candidate)
+    # print(candidate)
     # return candidate.query("모멘텀2 > 0")\
     return candidate.query("모멘텀 > 0")\
         .sort_values(by=["분류", "모멘텀"], ascending=[True, False])\
