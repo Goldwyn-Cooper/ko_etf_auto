@@ -13,6 +13,7 @@ def send_message(text):
     if type(text) == pd.DataFrame:
         text = text.reset_index().to_string(index=False)
     print(text)
+    r = None
     try:
         r = requests.post(
             URL + "/sendMessage", dict(chat_id=chat_id, text=text), timeout=100
@@ -20,4 +21,5 @@ def send_message(text):
         r.raise_for_status()
     except Exception as e:
         print(e)
-        print(r.text)
+        if r:
+            print(r.text)
