@@ -21,7 +21,7 @@ def get_price(symbol):
         timeframe="day",
     )
     r = requests.get(url, params=params)
-    text = r.text.replace("\n", "").replace("\t", "")
+    text = r.text.strip().replace("\n", "").replace("\t", "")
     data = ast.literal_eval(text)
     df = pd.DataFrame(data[1:], columns=data[0]).loc[:, ["날짜", "고가", "저가", "종가"]]
     df.set_index("날짜", inplace=True)
